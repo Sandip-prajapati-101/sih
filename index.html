@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Intelligent Food Packaging Recommendation System</title>
+<script type="importmap">
+{
+  "imports": {
+    "three": "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js",
+    "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"
+  }
+}
+</script>
+<link rel="stylesheet" href="static/style.css" />
+<style>#modelViewer{width:100%;min-height:340px;}</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>🍱 Intelligent Food Packaging System</h1>
+  <p class="sub">SIH PS-26236 &mdash; MoFPI &mdash; AI + Offline Hybrid Engine</p>
+
+  <div class="card">
+    <h2>Commodity Details</h2>
+    <div class="grid">
+      <div>
+        <label for="commodityName">Commodity Name</label>
+        <input id="commodityName" type="text" placeholder="e.g. Banana, Potato Chips, Milk" />
+      </div>
+      <div>
+        <label for="foodCategory">Food Category</label>
+        <select id="foodCategory">
+          <option value="">-- Select --</option>
+          <option value="fruits">Fresh Fruits / Vegetables</option>
+          <option value="snacks">Fried Snacks / Chips</option>
+          <option value="dairy">Dairy / Liquid</option>
+          <option value="bakery">Bakery / Grains</option>
+          <option value="other">Other / General</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="section-divider"></div>
+    <h2>Storage, Distribution &amp; Pack Size</h2>
+    <div class="grid">
+      <div>
+        <label for="shelfLife">Desired Shelf Life (days)</label>
+        <input id="shelfLife" type="number" min="1" placeholder="e.g. 30" />
+      </div>
+      <div>
+        <label for="storageType">Storage Type</label>
+        <select id="storageType">
+          <option value="ambient">Ambient (Room Temp)</option>
+          <option value="chilled">Chilled</option>
+          <option value="frozen">Frozen</option>
+        </select>
+      </div>
+      <div>
+        <label for="transport">Transportation Condition</label>
+        <select id="transport">
+          <option value="local">Local / Short-distance</option>
+          <option value="longdistance">Long-distance / Refrigerated</option>
+          <option value="export">Export / Air Freight</option>
+        </select>
+      </div>
+      <div>
+        <label for="budget">Budget Level</label>
+        <select id="budget">
+          <option value="low">Low</option>
+          <option value="medium">Medium</option>
+          <option value="high">High (Premium)</option>
+        </select>
+      </div>
+      <div>
+        <label for="productWeight">Total Product Weight (kg)</label>
+        <input id="productWeight" type="number" min="0" step="0.01" placeholder="e.g. 500" />
+      </div>
+      <div>
+        <label for="packetWeight">Weight per Packet</label>
+        <input id="packetWeight" type="number" min="0" step="0.01" placeholder="e.g. 250" />
+      </div>
+      <div>
+        <label for="packetUnit">Packet Unit</label>
+        <select id="packetUnit">
+          <option value="g">gm</option>
+          <option value="kg">kg</option>
+        </select>
+      </div>
+    </div>
+
+    <button id="submitBtn" onclick="getRecommendation()">Get Packaging Recommendation</button>
+    <div class="status" id="statusMsg"></div>
+  </div>
+
+  <div class="card" id="resultCard" style="display:none;">
+    <span class="badge" id="sourceBadge"></span>
+
+    <h2>AI-Predicted Properties</h2>
+    <div class="result-row"><span>Moisture Content (%)</span><b id="pMoisture"></b></div>
+    <div class="result-row"><span>Oil / Fat Content (%)</span><b id="pFat"></b></div>
+    <div class="result-row"><span>pH</span><b id="pPh"></b></div>
+    <div class="result-row"><span>Respiration Rate (ml CO2/kg/hr)</span><b id="pResp"></b></div>
+    <div class="result-row"><span>Storage Temperature (°C)</span><b id="pTemp"></b></div>
+    <div class="result-row"><span>Relative Humidity (%)</span><b id="pRh"></b></div>
+    <div class="model-caption">ℹ️ Typical AI-estimated values for this commodity, not lab-measured.</div>
+
+    <h2 style="margin-top:18px;">Material &amp; Justification</h2>
+    <div class="result-row"><span>Material</span><b id="rMaterial"></b></div>
+    <div class="result-row"><span>Reasoning</span><b id="rReasoning"></b></div>
+
+    <h2 style="margin-top:18px;">Technical Specifications</h2>
+    <div class="result-row"><span>OTR</span><b id="rOtr"></b></div>
+    <div class="result-row"><span>WVTR</span><b id="rWvtr"></b></div>
+    <div class="result-row"><span>Film Thickness</span><b id="rThickness"></b></div>
+    <div class="result-row"><span>Sealability</span><b id="rSeal"></b></div>
+    <div class="result-row"><span>Gas Permeability</span><b id="rGasPerm"></b></div>
+    <div class="result-row"><span>Mechanical Strength</span><b id="rMechStrength"></b></div>
+    <div class="result-row"><span>MAP Suitability</span><b id="rMapSuit"></b></div>
+    <div class="result-row"><span>MAP Gas Composition</span><b id="rMapGas"></b></div>
+    <div class="result-row"><span>Gas / Filler</span><b id="rGas"></b></div>
+
+    <h2 style="margin-top:18px;">Sustainability &amp; Decision Support</h2>
+    <div class="result-row"><span>Sustainable Option</span><b id="rSustainable"></b></div>
+    <div class="result-row"><span>Predicted Shelf Life</span><b id="rShelfLife"></b></div>
+    <div class="result-row"><span>Cost Estimate</span><b id="rCost"></b></div>
+    <div class="result-row"><span>Packets from this batch</span><b id="rPackets"></b></div>
+    <div class="result-row"><span>QR Traceability</span><b id="rQr"></b></div>
+
+    <h2 style="margin-top:18px;">3D Packaging Preview</h2>
+    <div class="layer-tabs" id="layerTabs" style="display:none;"></div>
+    <div id="modelViewer"></div>
+    <div class="model-caption" id="modelCaption">🖱️ Drag to rotate the 3D packaging preview</div>
+  </div>
+</div>
+
+<script src="static/form.js"></script>
+<script type="module" src="static/viewer3d.js"></script>
+</body>
+</html>

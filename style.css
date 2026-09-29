@@ -1,0 +1,224 @@
+/* Food Packaging Recommendation - data-sheet style UI
+   Palette: paper #EEF3F2, ink #15262C, film-blue #0E6B8A, seal-amber #E8A03A, line #C9D7D8 */
+
+@import url("https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600&family=Schibsted+Grotesk:wght@600;700;800&display=swap");
+
+:root {
+  --paper: #eef3f2;
+  --surface: #ffffff;
+  --ink: #15262c;
+  --muted: #5b6f75;
+  --line: #c9d7d8;
+  --blue: #0e6b8a;
+  --blue-dark: #0a5169;
+  --amber: #e8a03a;
+  --danger: #b3382c;
+  --font-head: "Schibsted Grotesk", "Segoe UI", system-ui, sans-serif;
+  --font-body: "Figtree", "Segoe UI", system-ui, sans-serif;
+}
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  background: var(--paper);
+  color: var(--ink);
+  font-family: var(--font-body);
+  font-size: 16px;
+  line-height: 1.5;
+}
+
+.wrap {
+  max-width: 920px;
+  margin: 0 auto;
+  padding: 40px 20px 72px;
+}
+
+h1 {
+  font-family: var(--font-head);
+  font-weight: 800;
+  font-size: clamp(1.9rem, 4.5vw, 2.7rem);
+  line-height: 1.1;
+  letter-spacing: -0.02em;
+  margin: 0 0 8px;
+}
+
+.sub {
+  margin: 0 0 28px;
+  color: var(--muted);
+  font-size: 0.95rem;
+}
+
+/* ---------- cards ---------- */
+.card {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  padding: 28px;
+  margin-bottom: 24px;
+}
+
+h2 {
+  font-family: var(--font-head);
+  font-weight: 700;
+  font-size: 1.15rem;
+  letter-spacing: -0.01em;
+  margin: 0 0 16px;
+}
+
+.section-divider {
+  height: 1px;
+  background: var(--line);
+  margin: 26px 0;
+}
+
+/* ---------- form ---------- */
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+  gap: 18px 20px;
+}
+
+label {
+  display: block;
+  font-size: 0.88rem;
+  font-weight: 600;
+  margin-bottom: 6px;
+}
+
+input, select {
+  width: 100%;
+  padding: 11px 12px;
+  font: inherit;
+  color: var(--ink);
+  background: #f9fbfb;
+  border: 1px solid var(--line);
+  border-radius: 6px;
+}
+
+input::placeholder { color: #93a4a8; }
+
+input:focus-visible, select:focus-visible, button:focus-visible {
+  outline: 3px solid rgba(14, 107, 138, 0.35);
+  outline-offset: 1px;
+  border-color: var(--blue);
+}
+
+button#submitBtn {
+  margin-top: 26px;
+  width: 100%;
+  padding: 14px 18px;
+  font: 600 1rem var(--font-head);
+  color: #fff;
+  background: var(--blue);
+  border: 0;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+button#submitBtn:hover { background: var(--blue-dark); }
+button#submitBtn:disabled { background: #7fa7b5; cursor: progress; }
+
+.status {
+  min-height: 1.4em;
+  margin-top: 12px;
+  font-size: 0.92rem;
+  color: var(--muted);
+}
+
+/* ---------- result ---------- */
+.badge {
+  display: inline-block;
+  margin-bottom: 18px;
+  padding: 4px 12px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--ink);
+  background: #fbeacb;
+  border: 1px solid var(--amber);
+  border-radius: 999px;
+}
+
+.result-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 24px;
+  padding: 10px 0;
+  border-bottom: 1px solid #e1eaea;
+}
+.result-row:last-of-type { border-bottom: 0; }
+
+.result-row span {
+  flex: 0 0 38%;
+  color: var(--muted);
+  font-size: 0.92rem;
+}
+
+.result-row b {
+  flex: 1;
+  text-align: right;
+  font-weight: 600;
+  overflow-wrap: anywhere;
+}
+
+/* ---------- layer tabs (multi-layer packaging: e.g. inner liner + outer box) ---------- */
+.layer-tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+.layer-tab {
+  padding: 7px 14px;
+  font: 600 0.85rem var(--font-body);
+  color: var(--ink);
+  background: #f4f8f8;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  cursor: pointer;
+  transition: background 0.15s, border-color 0.15s;
+}
+.layer-tab:hover { border-color: var(--blue); }
+.layer-tab.active {
+  color: #fff;
+  background: var(--blue);
+  border-color: var(--blue);
+}
+
+/* ---------- 3D stage ---------- */
+#modelViewer {
+  margin-top: 26px;
+  width: 100%;
+  height: 360px;
+  min-height: 340px;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  overflow: hidden;
+  background:
+    linear-gradient(var(--line) 1px, transparent 1px) 0 0 / 28px 28px,
+    linear-gradient(90deg, var(--line) 1px, transparent 1px) 0 0 / 28px 28px,
+    #f4f8f8;
+}
+#modelViewer canvas { display: block; width: 100%; height: 100%; cursor: grab; }
+#modelViewer canvas:active { cursor: grabbing; }
+
+.model-caption {
+  margin-top: 10px;
+  font-size: 0.85rem;
+  color: var(--muted);
+  text-align: center;
+}
+
+/* ---------- small screens ---------- */
+@media (max-width: 600px) {
+  .card { padding: 20px 16px; }
+  .result-row { flex-direction: column; gap: 2px; }
+  .result-row span { flex: none; }
+  .result-row b { text-align: left; }
+  #modelViewer { height: 300px; min-height: 300px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  * { transition: none !important; }
+}
